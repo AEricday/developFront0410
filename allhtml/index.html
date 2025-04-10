@@ -1,0 +1,77 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>index</title>
+  <script src="https://unpkg.com/vue@3.4.21/dist/vue.global.js"></script>
+  <script src="https://unpkg.com/pinia@3.0.1/dist/pinia.iife.js"></script>
+  <script src="https://unpkg.com/axios@1.8.4/dist/axios.min.js"></script>
+  <style>
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo {
+  height: 200rpx;
+  width: 200rpx;
+  margin-top: 200rpx;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 50rpx;
+}
+
+.text-area {
+  display: flex;
+  justify-content: center;
+}
+
+.title {
+  font-size: 36rpx;
+  color: #8f8f94;
+}
+</style>
+</head>
+<body>
+  <div id="app">
+  <view class="container">
+    <uni-scroll-view scroll-y class="scroll-view">
+      <uni-list>
+        <uni-list-item 
+          v-for="(item, index) in modules"
+          :key="index"
+          :title="item.name"
+          :thumb="item.icon"
+          clickable
+          @click="navigateTo(item.path)"
+        />
+      </uni-list>
+    </uni-scroll-view>
+  </view>
+</div>
+  <script>
+    
+const _component =  {
+  data() {
+    return {
+      title: 'Hello',
+    }
+  },
+  onLoad() {},
+  methods: {},
+}
+
+    const app = Vue.createApp(_component)
+    app.use(Pinia.createPinia())
+    try {
+  app.mount('#app')
+} catch (e) {
+  console.error('Mount error:', e)
+}
+  </script>
+</body>
+</html>
+    

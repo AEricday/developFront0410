@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>移动端登录界面原型</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            gap: 40px;
+        }
+
+        .prototype {
+            flex: 1;
+            max-width: 375px;
+            height: 667px;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .prototype:hover {
+            transform: translateY(-5px);
+        }
+
+        .design-specs {
+            flex: 1;
+            padding: 30px;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            max-height: 667px;
+        }
+
+        .login-container {
+            padding: 40px 20px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .logo img {
+            width: 90px;
+            height: 90px;
+            border-radius: 22px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .logo img:hover {
+            transform: scale(1.05);
+        }
+
+        .welcome-text {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+            font-size: 24px;
+            font-weight: 600;
+            animation: fadeIn 1s ease;
+        }
+
+        .input-group {
+            margin-bottom: 24px;
+            position: relative;
+            animation: fadeInUp 0.8s ease;
+            animation-fill-mode: both;
+        }
+
+        .input-group:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .input-group:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 15px 14px 45px;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background-color: #f8f9fa;
+        }
+
+        .input-group input:focus {
+            border-color: #4A90E2;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.15);
+            background-color: #fff;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 40px;
+            color: #999;
+            font-size: 18px;
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, #4A90E2, #357ABD);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
+            animation: fadeInUp 0.8s ease;
+            animation-delay: 0.6s;
+            animation-fill-mode: both;
+        }
+
+        .login-btn:hover {
+            background: linear-gradient(135deg, #357ABD, #2a5f94);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(74, 144, 226, 0.4);
+        }
+
+        .login-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 5px rgba(74, 144, 226, 0.3);
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 20px;
+            color: #4A90E2;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            animation: fadeIn 1s ease;
+            animation-delay: 0.8s;
+            animation-fill-mode: both;
+        }
+
+        .forgot-password:hover {
+            color: #357ABD;
+            text-decoration: underline;
+        }
+
+        .design-specs h2 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 24px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .design-specs h2:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, #4A90E2, #357ABD);
+            border-radius: 3px;
+        }
+
+        .spec-item {
+            margin-bottom: 25px;
+            padding: 15px;
+            border-radius: 12px;
+            background: #f8f9fa;
+            transition: all 0.3s;
+        }
+
+        .spec-item:hover {
+            background: #f0f2f5;
+            transform: translateX(5px);
+        }
+
+        .spec-item h3 {
+            color: #4A90E2;
+            margin-bottom: 10px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+        }
+
+        .spec-item h3 i {
+            margin-right: 8px;
+        }
+
+        .spec-item p {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .color-palette {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .color-box {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .color-box:hover {
+            transform: scale(1.1);
+        }
+
+        .color-name {
+            font-size: 12px;
+            text-align: center;
+            margin-top: 5px;
+            color: #666;
+        }
+
+        .color-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .social-login {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            gap: 20px;
+            animation: fadeIn 1s ease;
+            animation-delay: 1s;
+            animation-fill-mode: both;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .social-icon:hover {
+            transform: translateY(-3px);
+        }
+
+        .wechat {
+            background: #07C160;
+        }
+
+        .qq {
+            background: #12B7F5;
+        }
+
+        .weibo {
+            background: #E6162D;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .divider:before,
+        .divider:after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .divider:before {
+            margin-right: 10px;
+        }
+
+        .divider:after {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="prototype">
+            <div class="login-container">
+                <div class="logo">
+                    <img src="https://via.placeholder.com/90" alt="Logo">
+                </div>
+                <h1 class="welcome-text">欢迎登录</h1>
+                <div class="input-group">
+                    <label for="username">账号</label>
+                    <i class="fas fa-user input-icon"></i>
+                    <input type="text" id="username" placeholder="请输入账号">
+                </div>
+                <div class="input-group">
+                    <label for="password">密码</label>
+                    <i class="fas fa-lock input-icon"></i>
+                    <input type="password" id="password" placeholder="请输入密码">
+                </div>
+                <button class="login-btn">登 录</button>
+                <a href="#" class="forgot-password">忘记密码？</a>
+                
+                <div class="divider">其他登录方式</div>
+                
+                <div class="social-login">
+                    <div class="social-icon wechat">
+                        <i class="fab fa-weixin"></i>
+                    </div>
+                    <div class="social-icon qq">
+                        <i class="fab fa-qq"></i>
+                    </div>
+                    <div class="social-icon weibo">
+                        <i class="fab fa-weibo"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="design-specs">
+            <h2>设计说明</h2>
+            
+            <div class="spec-item">
+                <h3><i class="fas fa-th-large"></i> 布局设计</h3>
+                <p>采用垂直居中布局，确保在移动端一屏内完整展示。顶部Logo，欢迎文字，中间输入框，底部登录按钮，符合用户视觉习惯。增加社交登录选项，提供更多登录方式。</p>
+            </div>
+
+            <div class="spec-item">
+                <h3><i class="fas fa-palette"></i> 色彩方案</h3>
+                <p>主色调采用蓝色系，给人可靠、专业的感觉：</p>
+                <div class="color-palette">
+                    <div class="color-item">
+                        <div class="color-box" style="background: #4A90E2;"></div>
+                        <span class="color-name">主色</span>
+                    </div>
+                    <div class="color-item">
+                        <div class="color-box" style="background: #357ABD;"></div>
+                        <span class="color-name">深色</span>
+                    </div>
+                    <div class="color-item">
+                        <div class="color-box" style="background: #F5F5F5;"></div>
+                        <span class="color-name">背景</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="spec-item">
+                <h3><i class="fas fa-magic"></i> 交互设计</h3>
+                <p>1. 输入框获得焦点时有轻微放大效果和边框变色<br>
+                   2. 登录按钮有hover和点击效果<br>
+                   3. 所有可点击元素都有明确的视觉反馈<br>
+                   4. 添加图标增强视觉识别度<br>
+                   5. 社交登录图标有悬停效果</p>
+            </div>
+
+            <div class="spec-item">
+                <h3><i class="fas fa-mobile-alt"></i> 响应式设计</h3>
+                <p>界面宽度固定为375px（iPhone标准宽度），确保在移动端有最佳显示效果。整体采用圆角设计，符合现代移动端UI趋势。</p>
+            </div>
+
+            <div class="spec-item">
+                <h3><i class="fas fa-bolt"></i> 动画效果</h3>
+                <p>1. 页面元素采用渐入动画，提升用户体验<br>
+                   2. 按钮和输入框有过渡效果<br>
+                   3. 社交图标有悬停动画<br>
+                   4. 设计说明卡片有悬停效果</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 添加简单的交互效果
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('focus', () => {
+                input.style.transform = 'scale(1.02)';
+            });
+            input.addEventListener('blur', () => {
+                input.style.transform = 'scale(1)';
+            });
+        });
+
+        document.querySelector('.login-btn').addEventListener('click', () => {
+            alert('登录按钮被点击');
+        });
+
+        // 社交登录图标点击效果
+        document.querySelectorAll('.social-icon').forEach(icon => {
+            icon.addEventListener('click', () => {
+                const platform = icon.classList.contains('wechat') ? '微信' : 
+                                icon.classList.contains('qq') ? 'QQ' : '微博';
+                alert(`${platform}登录被点击`);
+            });
+        });
+    </script>
+</body>
+</html> 

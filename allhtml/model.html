@@ -1,0 +1,302 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>model</title>
+  <script src="https://unpkg.com/vue@3.4.21/dist/vue.global.js"></script>
+  <script src="https://unpkg.com/pinia@3.0.1/dist/pinia.iife.js"></script>
+  <script src="https://unpkg.com/axios@1.8.4/dist/axios.min.js"></script>
+  <style>
+.model-container {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  padding: 30rpx;
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30rpx;
+
+    .title {
+      font-size: 36rpx;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .add-btn {
+      display: flex;
+      align-items: center;
+      background-color: #67C23A;
+      color: #fff;
+      padding: 16rpx 30rpx;
+      border-radius: 30rpx;
+      font-size: 28rpx;
+
+      .iconfont {
+        margin-right: 10rpx;
+        font-size: 32rpx;
+      }
+    }
+  }
+
+  .search-section {
+    display: flex;
+    gap: 20rpx;
+    margin-bottom: 30rpx;
+
+    .search-box {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      background-color: #fff;
+      padding: 20rpx;
+      border-radius: 16rpx;
+
+      .iconfont {
+        color: #999;
+        margin-right: 10rpx;
+      }
+
+      input {
+        flex: 1;
+        font-size: 28rpx;
+      }
+    }
+
+    .filter-box {
+      .picker-item {
+        display: flex;
+        align-items: center;
+        background-color: #fff;
+        padding: 20rpx 30rpx;
+        border-radius: 16rpx;
+        font-size: 28rpx;
+
+        .iconfont {
+          margin-left: 10rpx;
+          color: #999;
+        }
+      }
+    }
+  }
+
+  .model-list {
+    .model-item {
+      background-color: #fff;
+      border-radius: 16rpx;
+      padding: 30rpx;
+      margin-bottom: 20rpx;
+
+      .model-info {
+        .model-header {
+          display: flex;
+          align-items: center;
+          margin-bottom: 16rpx;
+
+          .model-name {
+            font-size: 32rpx;
+            font-weight: 600;
+            color: #333;
+            margin-right: 20rpx;
+          }
+
+          .type-tag {
+            padding: 4rpx 16rpx;
+            border-radius: 20rpx;
+            font-size: 24rpx;
+
+            &.chat {
+              background-color: #67C23A;
+              color: #fff;
+            }
+
+            &.voice {
+              background-color: #E6A23C;
+              color: #fff;
+            }
+
+            &.image {
+              background-color: #4A90E2;
+              color: #fff;
+            }
+          }
+        }
+
+        .model-meta {
+          display: flex;
+          gap: 20rpx;
+          margin-bottom: 16rpx;
+          font-size: 26rpx;
+          color: #666;
+        }
+
+        .model-desc {
+          font-size: 26rpx;
+          color: #999;
+          line-height: 1.5;
+          margin-bottom: 16rpx;
+        }
+
+        .model-stats {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 20rpx;
+
+          .stat-item {
+            font-size: 24rpx;
+            color: #666;
+          }
+        }
+      }
+
+      .model-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 16rpx;
+        margin-top: 20rpx;
+
+        .action-btn {
+          width: 64rpx;
+          height: 64rpx;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border-radius: 32rpx;
+
+          &.train {
+            background-color: #67C23A;
+            color: #fff;
+          }
+
+          &.edit {
+            background-color: #4A90E2;
+            color: #fff;
+          }
+
+          &.delete {
+            background-color: #F56C6C;
+            color: #fff;
+          }
+
+          .iconfont {
+            font-size: 36rpx;
+          }
+        }
+      }
+    }
+  }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 100rpx 0;
+    color: #999;
+
+    .iconfont {
+      font-size: 96rpx;
+      margin-bottom: 20rpx;
+    }
+  }
+}
+</style>
+</head>
+<body>
+  <div id="app">
+  <view class="model-container">
+    <!-- 页面标题 -->
+    <view class="page-header">
+      <text class="title">模型管理</text>
+      <button class="add-btn" @click="handleAddModel">
+        <text class="iconfont icon-add"></text>
+        <text>添加模型</text>
+      </button>
+    </view>
+
+    <!-- 搜索和筛选 -->
+    <view class="search-section">
+      <view class="search-box">
+        <text class="iconfont icon-search"></text>
+        <input
+          type="text"
+          v-model="searchQuery"
+          placeholder="搜索模型名称或ID"
+          @input="handleSearch"
+        />
+      </view>
+      <view class="filter-box">
+        <picker
+          mode="selector"
+          :range="typeOptions"
+          :value="typeIndex"
+          @change="handleTypeChange"
+        >
+          <view class="picker-item">
+            <text>类型: {{ typeOptions[typeIndex] }}</text>
+            <text class="iconfont icon-arrow-down"></text>
+          </view>
+        </picker>
+      </view>
+    </view>
+
+    <!-- 模型列表 -->
+    <view class="model-list">
+      <view
+        class="model-item"
+        v-for="model in filteredModels"
+        :key="model.id"
+        @click="handleModelDetail(model)"
+      >
+        <view class="model-info">
+          <view class="model-header">
+            <text class="model-name">{{ model.name }}</text>
+            <text :class="['type-tag', model.type]">{{ model.typeText }}</text>
+          </view>
+          <view class="model-meta">
+            <text class="model-id">ID: {{ model.id }}</text>
+            <text class="model-version">版本: {{ model.version }}</text>
+          </view>
+          <view class="model-desc">{{ model.description }}</view>
+          <view class="model-stats">
+            <text class="stat-item">训练次数: {{ model.trainCount }}</text>
+            <text class="stat-item">使用次数: {{ model.useCount }}</text>
+            <text class="stat-item">更新时间: {{ model.updateTime }}</text>
+          </view>
+        </view>
+        <view class="model-actions">
+          <button class="action-btn train" @click.stop="handleTrainModel(model)">
+            <text class="iconfont icon-train"></text>
+          </button>
+          <button class="action-btn edit" @click.stop="handleEditModel(model)">
+            <text class="iconfont icon-edit"></text>
+          </button>
+          <button class="action-btn delete" @click.stop="handleDeleteModel(model)">
+            <text class="iconfont icon-delete"></text>
+          </button>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-state" v-if="filteredModels.length === 0">
+      <text class="iconfont icon-empty"></text>
+      <text>暂无模型数据</text>
+    </view>
+  </view>
+</div>
+  <script>
+    undefined
+    const app = Vue.createApp(_component)
+    app.use(Pinia.createPinia())
+    try {
+  app.mount('#app')
+} catch (e) {
+  console.error('Mount error:', e)
+}
+  </script>
+</body>
+</html>
+    

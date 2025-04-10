@@ -1,0 +1,416 @@
+<template>
+  <view class="user-container">
+    <!-- 顶部设置按钮 -->
+    <view class="settings-icon">
+      <uni-icons type="gear" size="24"></uni-icons>
+    </view>
+    
+    <!-- 用户信息头部 -->
+    <view class="user-header">
+      <view class="user-info">
+        <image class="avatar" src="/static/images/default-avatar.png" mode="aspectFill"></image>
+        <view class="info-content">
+          <text class="username">{{ userInfo.username || '未登录' }}</text>
+          <text class="user-id" v-if="userInfo.username">ID: {{ userInfo.id }}</text>
+        </view>
+      </view>
+      <button class="edit-btn" @click="handleEditProfile" v-if="userInfo.username">
+        <text class="iconfont icon-edit"></text>
+      </button>
+    </view>
+    
+    <!-- 标签页导航 -->
+    <view class="tab-nav">
+      <view class="tab-item" :class="{ active: activeTab === 'works' }" @click="activeTab = 'works'">
+        作品
+      </view>
+      <view class="tab-item" :class="{ active: activeTab === 'private' }" @click="activeTab = 'private'">
+        私密 <uni-icons type="locked" size="16"></uni-icons>
+      </view>
+      <view class="tab-item" :class="{ active: activeTab === 'ai' }" @click="activeTab = 'ai'">
+        智能体
+      </view>
+      <view class="tab-item" :class="{ active: activeTab === 'favorites' }" @click="activeTab = 'favorites'">
+        收藏
+      </view>
+    </view>
+    
+    <!-- 作品展示区域 -->
+    <view class="works-container" v-if="activeTab === 'works'">
+      <view class="work-item" v-for="(item, index) in worksList" :key="index">
+        <image :src="item.image" mode="aspectFill"></image>
+        <text class="work-count" v-if="item.count">{{item.count}}</text>
+      </view>
+    </view>
+    
+    <!-- 功能模块导航 -->
+    <view class="module-grid" v-if="activeTab === 'ai'">
+      <view class="module-item" v-for="(module, index) in modules" :key="index" @click="navigateToModule(module.path)">
+        <view class="module-icon" :style="{ backgroundColor: module.color }">
+          <text class="iconfont" :class="module.icon"></text>
+        </view>
+        <text class="module-name">{{ module.name }}</text>
+      </view>
+    </view>
+    
+    <!-- 常用功能列表 -->
+    <view class="function-list" v-if="activeTab === 'ai'">
+      <view class="list-header">
+        <text class="title">常用功能</text>
+      </view>
+      <view class="list-content">
+        <view class="function-item" @click="handleChangePassword">
+          <text class="iconfont icon-lock"></text>
+          <text class="item-name">修改密码</text>
+          <text class="iconfont icon-arrow-right"></text>
+        </view>
+        <view class="function-item" @click="handleDeviceManagement">
+          <text class="iconfont icon-device"></text>
+          <text class="item-name">设备管理</text>
+          <text class="iconfont icon-arrow-right"></text>
+        </view>
+        <view class="function-item" @click="handleSystemSettings">
+          <text class="iconfont icon-settings"></text>
+          <text class="item-name">系统设置</text>
+          <text class="iconfont icon-arrow-right"></text>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 退出登录按钮 -->
+    <button class="logout-btn" @click="handleLogout" v-if="userInfo.username">退出登录</button>
+  </view>
+</template>
+
+<script setup>
+import { ref, reactive, onMounted } from 'vue';
+
+const baseUrl = 'http://localhost:8002/xiaozhi';
+const userInfo = ref({});
+const activeTab = ref('works');
+
+// 作品列表数据
+const worksList = reactive([
+  { image: '/static/images/work1.jpg' },
+  { image: '/static/images/work2.jpg', count: 4 },
+  { image: '/static/images/work3.jpg' },
+  { image: '/static/images/work4.jpg', count: 2 }
+]);
+
+// 功能模块配置
+const modules = reactive([
+  { name: '设备管理', icon: 'icon-device', color: '#4A90E2', path: '/pages/device/index' },
+  { name: '模型管理', icon: 'icon-model', color: '#67C23A', path: '/pages/model/index' },
+  { name: '音色管理', icon: 'icon-voice', color: '#E6A23C', path: '/pages/voice/index' },
+  { name: '代理管理', icon: 'icon-agent', color: '#F56C6C', path: '/pages/agent/index' },
+  { name: '系统管理', icon: 'icon-system', color: '#909399', path: '/pages/system/index' },
+  { name: '数据统计', icon: 'icon-stats', color: '#9B59B6', path: '/pages/stats/index' }
+]);
+
+// 获取用户信息
+const getUserInfo = async () => {
+  try {
+    const token = uni.getStorageSync('token');
+    if (!token) return;
+    
+    const response = await uni.request({
+      url: `${baseUrl}/user/info`,
+      method: 'GET',
+      header: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    
+    if (response.data.code === 200) {
+      userInfo.value = response.data.data;
+    } else {
+      uni.removeStorageSync('token');
+      uni.showToast({
+        title: '请重新登录',
+        icon: 'none'
+      });
+      setTimeout(() => {
+        uni.redirectTo({ url: '/pages/login/index' });
+      }, 1500);
+    }
+  } catch (error) {
+    console.error('获取用户信息失败:', error);
+  }
+};
+
+// 模块导航
+const navigateToModule = (path) => {
+  uni.navigateTo({ url: path });
+};
+
+// 修改密码
+const handleChangePassword = () => {
+  uni.navigateTo({ url: '/pages/user/change-password' });
+};
+
+// 设备管理
+const handleDeviceManagement = () => {
+  uni.navigateTo({ url: '/pages/device/index' });
+};
+
+// 系统设置
+const handleSystemSettings = () => {
+  uni.navigateTo({ url: '/pages/system/settings' });
+};
+
+// 编辑个人资料
+const handleEditProfile = () => {
+  uni.navigateTo({ url: '/pages/user/edit-profile' });
+};
+
+// 退出登录
+const handleLogout = () => {
+  uni.showModal({
+    title: '提示',
+    content: '确定要退出登录吗？',
+    success: (res) => {
+      if (res.confirm) {
+        uni.removeStorageSync('token');
+        uni.removeStorageSync('userInfo');
+        uni.redirectTo({ url: '/pages/login/index' });
+      }
+    }
+  });
+};
+
+onMounted(() => {
+  getUserInfo();
+});
+</script>
+
+<style lang="scss">
+.user-container {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  padding-bottom: 40rpx;
+  position: relative;
+  
+  .user-header {
+    position: relative;
+    padding: 40rpx;
+    background: linear-gradient(135deg, #4A90E2, #357ABD);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 20rpx;
+      
+      .avatar {
+        width: 120rpx;
+        height: 120rpx;
+        border-radius: 60rpx;
+        border: 4rpx solid rgba(255, 255, 255, 0.3);
+      }
+      
+      .info-content {
+        .username {
+          font-size: 36rpx;
+          color: #fff;
+          font-weight: 600;
+          margin-bottom: 8rpx;
+        }
+        
+        .user-id {
+          font-size: 24rpx;
+          color: rgba(255, 255, 255, 0.8);
+        }
+      }
+    }
+    
+    .edit-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      padding: 16rpx;
+      border-radius: 50%;
+      
+      .iconfont {
+        color: #fff;
+        font-size: 36rpx;
+      }
+    }
+  }
+  
+  .module-grid {
+    margin: 30rpx;
+    padding: 30rpx;
+    background-color: #fff;
+    border-radius: 24rpx;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30rpx;
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+    
+    .module-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16rpx;
+      
+      .module-icon {
+        width: 100rpx;
+        height: 100rpx;
+        border-radius: 30rpx;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        
+        .iconfont {
+          color: #fff;
+          font-size: 48rpx;
+        }
+      }
+      
+      .module-name {
+        font-size: 26rpx;
+        color: #333;
+      }
+    }
+  }
+  
+  .function-list {
+    margin: 30rpx;
+    background-color: #fff;
+    border-radius: 24rpx;
+    overflow: hidden;
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+    
+    .list-header {
+      padding: 30rpx;
+      border-bottom: 2rpx solid #f5f5f5;
+      
+      .title {
+        font-size: 32rpx;
+        font-weight: 600;
+        color: #333;
+      }
+    }
+    
+    .list-content {
+      .function-item {
+        display: flex;
+        align-items: center;
+        padding: 30rpx;
+        border-bottom: 2rpx solid #f5f5f5;
+        
+        &:last-child {
+          border-bottom: none;
+        }
+        
+        .iconfont {
+          font-size: 40rpx;
+          color: #666;
+          margin-right: 20rpx;
+          
+          &.icon-arrow-right {
+            margin-left: auto;
+            margin-right: 0;
+            color: #999;
+            font-size: 32rpx;
+          }
+        }
+        
+        .item-name {
+          font-size: 28rpx;
+          color: #333;
+        }
+      }
+    }
+  }
+  
+  .logout-btn {
+    margin: 60rpx 30rpx;
+    height: 88rpx;
+    line-height: 88rpx;
+    background-color: #fff;
+    color: #f56c6c;
+    font-size: 32rpx;
+    border-radius: 44rpx;
+    border: 2rpx solid #f56c6c;
+    
+    &:active {
+      opacity: 0.8;
+    }
+  }
+  
+  .settings-icon {
+    position: absolute;
+    top: 20rpx;
+    right: 20rpx;
+    z-index: 10;
+  }
+  
+  .tab-nav {
+    display: flex;
+    border-bottom: 1px solid #eee;
+    background-color: #fff;
+    margin-top: 20rpx;
+  }
+  
+  .tab-item {
+    flex: 1;
+    text-align: center;
+    padding: 20rpx 0;
+    font-size: 28rpx;
+    color: #666;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .tab-item.active {
+    color: #000;
+    font-weight: bold;
+  }
+  
+  .tab-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40rpx;
+    height: 4rpx;
+    background-color: #000;
+  }
+  
+  .works-container {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10rpx;
+    background-color: #fff;
+  }
+  
+  .work-item {
+    width: calc(33.33% - 10rpx);
+    height: 240rpx;
+    margin: 5rpx;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .work-item image {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .work-count {
+    position: absolute;
+    right: 10rpx;
+    bottom: 10rpx;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    font-size: 24rpx;
+    padding: 4rpx 10rpx;
+    border-radius: 12rpx;
+  }
+}
+</style>

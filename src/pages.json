@@ -1,0 +1,73 @@
+{
+	"pages": [
+		{
+			"path": "pages/login/index",
+			"style": {
+				"navigationBarTitleText": "登录",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/register/index",
+			"style": {
+				"navigationBarTitleText": "用户注册"
+			}
+		},
+		{
+			"path": "pages/user/index",
+			"style": {
+				"navigationBarTitleText": "用户中心",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/user/profile",
+			"style": {
+				"navigationBarTitleText": "个人主页",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/device/index",
+			"style": {
+				"navigationBarTitleText": "设备管理"
+			}
+		},
+		{
+			"path": "pages/model/index",
+			"style": {
+				"navigationBarTitleText": "模型管理"
+			}
+		},
+		{
+			"path": "pages/voice/index",
+			"style": {
+				"navigationBarTitleText": "音色管理"
+			}
+		},
+		{
+			"path": "pages/agent/index",
+			"style": {
+				"navigationBarTitleText": "代理管理"
+			}
+		},
+		{
+			"path": "pages/system/index",
+			"style": {
+				"navigationBarTitleText": "系统管理"
+			}
+		},
+		{
+			"path": "pages/stats/index",
+			"style": {
+				"navigationBarTitleText": "数据统计"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	}
+}

@@ -1,0 +1,1 @@
+mongodb://root:pgtln4t2@test-db-mongodb.ns-xrnbtoi9.svc:27017
