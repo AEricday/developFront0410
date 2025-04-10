@@ -1,0 +1,25 @@
+    1  bash 'C:\document\bot\Yunzai/plugins/TRSS-Plugin/Real-ESRGAN/main.sh' --fp32 --tile 100 -n RealESRGAN_x4plus_anime_6B -i input.jpg
+    2  git init
+    3  git add
+    4  git add .
+    5  git commit -m "test message"
+    6  git config --global 1975462170@qq.com
+    7  [200~git config --global user.name "JTAN1"
+    8  git config --global user.email "1975462170@qq.com"
+    9  git config --global user.name"JTAN1"
+   10  git commit -m "test message"
+   11  git remote add developFront0410 git@github.com:AEricday/developFront0410.git
+   12  git push -u developFront0410 master
+   13  ls -al ~/.ssh
+   14  ssh-keygen -t ed25519 -C "1975462170@qq.com"
+   15  eval "$(ssh-agent -s)"
+   16  ssh-add ~/.ssh/id_ed25519
+   17  clip < ~/.ssh/id_ed25519.pub
+   18  ssh -T git@github.com
+   19  git push -u developFront0410 master
+   20  git log
+   21  git log > git_log1.txt
+   22  script -a record.txt
+   23  pacman -S util - linux
+   24  git log | tee -a log_output.txt
+   25  history > command_history.txt
