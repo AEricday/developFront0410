@@ -1,1 +1,3 @@
 mongodb://root:pgtln4t2@test-db-mongodb.ns-xrnbtoi9.svc:27017
+
+mongodb的数据库接口 
